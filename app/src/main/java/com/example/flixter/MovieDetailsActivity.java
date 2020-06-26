@@ -9,6 +9,7 @@ import android.content.res.Resources;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Parcel;
+import android.text.method.ScrollingMovementMethod;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -52,6 +53,7 @@ public class MovieDetailsActivity extends AppCompatActivity {
         // set the title and overview
         binding.tvTitle.setText(movie.getTitle());
         binding.tvOverview.setText(movie.getOverview());
+        binding.tvOverview.setMovementMethod(new ScrollingMovementMethod());
         binding.tvPopularity.setText("Popularity: " + movie.getPopularity());
 
         // vote average is 0-10, convert to 0-5 by dividing by 2

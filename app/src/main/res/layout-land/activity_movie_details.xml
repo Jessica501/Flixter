@@ -4,6 +4,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="#303030"
+    android:isScrollContainer="true"
     tools:context=".MovieDetailsActivity">
 
     <TextView
@@ -13,12 +15,16 @@
         android:layout_alignParentStart="true"
         android:layout_marginStart="0dp"
         android:layout_marginTop="0dp"
+        android:fontFamily="sans-serif-medium"
         android:text="TextView"
-        android:textAppearance="@style/TextAppearance.AppCompat.Large" />
+        android:textAppearance="@style/TextAppearance.AppCompat.Large"
+        android:textColor="#FDFDFD"
+        android:textSize="24sp"
+    />
 
     <RatingBar
         android:id="@+id/rbVoteAverage"
-        style="@style/Widget.AppCompat.RatingBar.Small"
+        style="@android:style/Widget.DeviceDefault.Light.RatingBar.Indicator"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@+id/tvTitle"
@@ -36,7 +42,10 @@
         android:layout_marginStart="5dp"
         android:layout_marginTop="0dp"
         android:layout_toEndOf="@+id/ivBackdrop"
-        android:text="TextView" />
+        android:scrollbars="vertical"
+        android:text="TextView"
+        android:textColor="#FDFDFD"
+        android:textSize="16sp" />
 
     <ImageView
         android:id="@+id/ivBackdrop"
@@ -66,6 +75,8 @@
         android:layout_below="@+id/rbVoteAverage"
         android:layout_alignParentStart="true"
         android:layout_marginTop="0dp"
-        android:text="TextView" />
+        android:text="TextView"
+        android:textColor="#FDFDFD"
+        android:textSize="16sp" />
 
 </RelativeLayout>
