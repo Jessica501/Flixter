@@ -18,12 +18,15 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.example.flixter.MovieDetailsActivity;
+import com.example.flixter.MovieTrailerActivity;
 import com.example.flixter.R;
 import com.example.flixter.models.Movie;
 
 import org.parceler.Parcels;
 
 import java.util.List;
+
+import jp.wasabeef.glide.transformations.RoundedCornersTransformation;
 
 public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.ViewHolder> {
 
@@ -92,7 +95,14 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.ViewHolder> 
                 imageUrl = movie.getPosterPath();
                 placeholder = ResourcesCompat.getDrawable(res, R.drawable.flicks_movie_placeholder, null);
             }
-            Glide.with(context).load(imageUrl).placeholder(placeholder).into(ivPoster);
+            int radius = 20;
+            int margin = 5;
+            Glide
+                    .with(context)
+                    .load(imageUrl)
+                    .transform(new RoundedCornersTransformation(radius, margin))
+                    .placeholder(placeholder)
+                    .into(ivPoster);
         }
 
         @Override
@@ -112,5 +122,7 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.ViewHolder> 
                 context.startActivity(intent);
             }
         }
+
     }
+
 }
