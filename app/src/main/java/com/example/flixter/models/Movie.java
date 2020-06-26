@@ -24,13 +24,17 @@ public class Movie {
     String overview;
     Double voteAverage;
     Integer id;
-    String videoId;
+//    String videoId;
+    Double popularity;
+
 
     public static final String TAG = "Movie";
 
     // no-arg, empty constructor required for Parceler
     public Movie() {
     }
+
+
 
 
     public Movie(JSONObject jsonObject) throws JSONException {
@@ -40,7 +44,8 @@ public class Movie {
         overview = jsonObject.getString("overview");
         voteAverage = jsonObject.getDouble("vote_average");
         id = jsonObject.getInt("id");
-        setVideoId();
+        popularity = jsonObject.getDouble("popularity");
+//        setVideoId();
     }
 
     public static List<Movie> fromJSONArray(JSONArray movieJsonArray) throws JSONException {
@@ -51,47 +56,7 @@ public class Movie {
         return movies;
     }
 
-    private void  setVideoId() {
-        // retrieve video from the API
-        String videoUrl = String.format("https://api.themoviedb.org/3/movie/%d/videos?api_key=a07e22bc18f5cb106bfe4cc1f83ad8ed", this.id);
-        Log.d(TAG, videoUrl);
-        AsyncHttpClient client = new AsyncHttpClient();
-        client.get(videoUrl, new JsonHttpResponseHandler() {
-            @Override
-            public void onSuccess(int statusCode, Headers headers, JSON json) {
-                Log.d(TAG, "onSuccess");
-                JSONObject jsonObject = json.jsonObject;
-                try {
-                    JSONArray results = jsonObject.getJSONArray("results");
-                    videoId = getFirstYoutubeId(results);
-                    Log.d(TAG, String.format("Youtube ID: %s", videoId));
 
-                } catch (JSONException e) {
-                    Log.e(TAG, "Hit json exception", e);
-                    e.printStackTrace();
-                }
-            }
-
-            @Override
-            public void onFailure(int statusCode, Headers headers, String response, Throwable throwable) {
-                Log.d(TAG, "onFailure");
-            }
-        });
-    }
-
-    // Returns the first video id that is from the site "YouTube"
-    private String getFirstYoutubeId(JSONArray jsonArray) {
-        for (int i = 0; i < jsonArray.length(); i++) {
-            try {
-                if (jsonArray.getJSONObject(i).getString("site").equals("YouTube")) {
-                    return jsonArray.getJSONObject(i).getString("key");
-                }
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-        }
-        return "";
-    }
 
 
     public String getPosterPath() {
@@ -118,7 +83,11 @@ public class Movie {
         return id;
     }
 
-    public String getVideoId() {
-        return videoId;
+//    public String getVideoId() {
+//        return videoId;
+//    }
+
+    public Double getPopularity() {
+        return popularity;
     }
 }

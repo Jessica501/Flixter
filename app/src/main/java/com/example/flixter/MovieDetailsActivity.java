@@ -31,14 +31,13 @@ import okhttp3.Headers;
 public class MovieDetailsActivity extends AppCompatActivity {
 
     Movie movie;
-    String videoUrl;
-    String youtubeId;
     Context context;
     public static final String TAG = "MovieDetailsActivity";
 
     // view objects
     TextView tvTitle;
     TextView tvOverview;
+    TextView tvPopularity;
     RatingBar rbVoteAverage;
     ImageView ivBackdrop;
     ImageView ivPlay;
@@ -53,6 +52,7 @@ public class MovieDetailsActivity extends AppCompatActivity {
         // initialize the view objects
         tvTitle = (TextView) findViewById(R.id.tvTitle);
         tvOverview = (TextView) findViewById(R.id.tvOverview);
+        tvPopularity = (TextView) findViewById(R.id.tvPopularity);
         rbVoteAverage = (RatingBar) findViewById(R.id.rbVoteAverage);
         ivBackdrop = (ImageView) findViewById(R.id.ivBackdrop);
         ivPlay = (ImageView) findViewById(R.id.ivPlay);
@@ -65,6 +65,7 @@ public class MovieDetailsActivity extends AppCompatActivity {
         // set the title and overview
         tvTitle.setText(movie.getTitle());
         tvOverview.setText(movie.getOverview());
+        tvPopularity.setText("Popularity: " + movie.getPopularity());
 
         // vote average is 0-10, convert to 0-5 by dividing by 2
         float voteAverage = movie.getVoteAverage().floatValue();
@@ -79,15 +80,57 @@ public class MovieDetailsActivity extends AppCompatActivity {
                 .placeholder(placeholder)
                 .into(ivBackdrop);
 
-        // listener launches MovieTrailerActivity when backdrop image is tapped
-        ivBackdrop.setOnClickListener(new View.OnClickListener() {
+        // retrieve video from the API
+        String videoUrl = String.format("https://api.themoviedb.org/3/movie/%d/videos?api_key=a07e22bc18f5cb106bfe4cc1f83ad8ed", movie.getId());
+        Log.d(TAG, videoUrl);
+        AsyncHttpClient client = new AsyncHttpClient();
+        client.get(videoUrl, new JsonHttpResponseHandler() {
             @Override
-            public void onClick(View view) {
-                Intent i = new Intent(view.getContext(), MovieTrailerActivity.class);
-                i.putExtra("video_id", movie.getVideoId());
-                i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                context.startActivity(i);
+            public void onSuccess(int statusCode, Headers headers, JSON json) {
+                Log.d(TAG, "onSuccess");
+                JSONObject jsonObject = json.jsonObject;
+                try {
+                    JSONArray results = jsonObject.getJSONArray("results");
+                    final String videoId = getFirstYoutubeId(results);
+                    Log.d(TAG, String.format("Youtube ID: %s", videoId));
+
+                    // listener launches MovieTrailerActivity when backdrop image is tapped
+                    ivBackdrop.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            Intent i = new Intent(MovieDetailsActivity.this, MovieTrailerActivity.class);
+                            i.putExtra("video_id", videoId);
+                            startActivity(i);
+                        }
+                    });
+
+                } catch (JSONException e) {
+                    Log.e(TAG, "Hit json exception", e);
+                    e.printStackTrace();
+                }
+            }
+
+            @Override
+            public void onFailure(int statusCode, Headers headers, String response, Throwable throwable) {
+                Log.d(TAG, "onFailure");
             }
         });
+
+
+    }
+
+
+    // Returns the first video id that is from the site "YouTube"
+    private String getFirstYoutubeId(JSONArray jsonArray) {
+        for (int i = 0; i < jsonArray.length(); i++) {
+            try {
+                if (jsonArray.getJSONObject(i).getString("site").equals("YouTube")) {
+                    return jsonArray.getJSONObject(i).getString("key");
+                }
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+        return "";
     }
 }
