@@ -20,6 +20,7 @@ import com.bumptech.glide.Glide;
 import com.example.flixter.MovieDetailsActivity;
 import com.example.flixter.MovieTrailerActivity;
 import com.example.flixter.R;
+import com.example.flixter.databinding.ItemMovieBinding;
 import com.example.flixter.models.Movie;
 
 import org.parceler.Parcels;
@@ -43,8 +44,7 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.ViewHolder> 
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         Log.d("MovieAdapter", "onCreateViewHolder");
-        View movieView = LayoutInflater.from(context).inflate(R.layout.item_movie, parent, false);
-        return new ViewHolder(movieView);
+        return new ViewHolder(ItemMovieBinding.inflate(LayoutInflater.from(context)));
     }
 
     // involves populating data into the item through holder
@@ -66,22 +66,19 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.ViewHolder> 
 
     public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
-        TextView tvTitle;
-        TextView tvOverview;
-        ImageView ivPoster;
+        ItemMovieBinding binding;
 
-        public ViewHolder(@NonNull View itemView) {
-            super(itemView);
-            tvTitle = itemView.findViewById(R.id.tvTitle);
-            tvOverview = itemView.findViewById(R.id.tvOverview);
-            ivPoster = itemView.findViewById(R.id.ivPoster);
+        public ViewHolder(@NonNull ItemMovieBinding b) {
+            super(b.getRoot());
+
+            binding = b;
             itemView.setOnClickListener(this);
 
         }
 
         public void bind(Movie movie) {
-            tvTitle.setText(movie.getTitle());
-            tvOverview.setText(movie.getOverview());
+            binding.tvTitle.setText(movie.getTitle());
+            binding.tvOverview.setText(movie.getOverview());
             String imageUrl;
             Resources res = context.getResources();
             Drawable placeholder;
@@ -102,7 +99,7 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.ViewHolder> 
                     .load(imageUrl)
                     .transform(new RoundedCornersTransformation(radius, margin))
                     .placeholder(placeholder)
-                    .into(ivPoster);
+                    .into(binding.ivPoster);
         }
 
         @Override

@@ -10,6 +10,7 @@ import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Parcel;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.RatingBar;
@@ -18,6 +19,7 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.codepath.asynchttpclient.AsyncHttpClient;
 import com.codepath.asynchttpclient.callback.JsonHttpResponseHandler;
+import com.example.flixter.databinding.ActivityMovieDetailsBinding;
 import com.example.flixter.models.Movie;
 
 import org.json.JSONArray;
@@ -34,42 +36,27 @@ public class MovieDetailsActivity extends AppCompatActivity {
     Context context;
     public static final String TAG = "MovieDetailsActivity";
 
-    // view objects
-    TextView tvTitle;
-    TextView tvOverview;
-    TextView tvPopularity;
-    RatingBar rbVoteAverage;
-    ImageView ivBackdrop;
-    ImageView ivPlay;
-
 
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_movie_details);
+        final ActivityMovieDetailsBinding binding = ActivityMovieDetailsBinding.inflate(getLayoutInflater());
+        View view = binding.getRoot();
+        setContentView(view);
         context = this.getApplicationContext();
-
-        // initialize the view objects
-        tvTitle = (TextView) findViewById(R.id.tvTitle);
-        tvOverview = (TextView) findViewById(R.id.tvOverview);
-        tvPopularity = (TextView) findViewById(R.id.tvPopularity);
-        rbVoteAverage = (RatingBar) findViewById(R.id.rbVoteAverage);
-        ivBackdrop = (ImageView) findViewById(R.id.ivBackdrop);
-        ivPlay = (ImageView) findViewById(R.id.ivPlay);
-
 
         // unwrap the movie passed in via intent
         movie = (Movie) Parcels.unwrap(getIntent().getParcelableExtra(Movie.class.getSimpleName()));
         Log.d("MovieDetailsActivity", String.format("Showing details for '%s'", movie.getTitle()));
 
         // set the title and overview
-        tvTitle.setText(movie.getTitle());
-        tvOverview.setText(movie.getOverview());
-        tvPopularity.setText("Popularity: " + movie.getPopularity());
+        binding.tvTitle.setText(movie.getTitle());
+        binding.tvOverview.setText(movie.getOverview());
+        binding.tvPopularity.setText("Popularity: " + movie.getPopularity());
 
         // vote average is 0-10, convert to 0-5 by dividing by 2
         float voteAverage = movie.getVoteAverage().floatValue();
-        rbVoteAverage.setRating(voteAverage = voteAverage > 0 ? voteAverage / 2.0f : voteAverage);
+        binding.rbVoteAverage.setRating(voteAverage = voteAverage > 0 ? voteAverage / 2.0f : voteAverage);
 
         // set the image
         Resources res = context.getResources();
@@ -78,7 +65,7 @@ public class MovieDetailsActivity extends AppCompatActivity {
                 .with(context)
                 .load(movie.getBackdropPath())
                 .placeholder(placeholder)
-                .into(ivBackdrop);
+                .into(binding.ivBackdrop);
 
         // retrieve video from the API
         String videoUrl = String.format("https://api.themoviedb.org/3/movie/%d/videos?api_key=a07e22bc18f5cb106bfe4cc1f83ad8ed", movie.getId());
@@ -95,7 +82,7 @@ public class MovieDetailsActivity extends AppCompatActivity {
                     Log.d(TAG, String.format("Youtube ID: %s", videoId));
 
                     // listener launches MovieTrailerActivity when backdrop image is tapped
-                    ivBackdrop.setOnClickListener(new View.OnClickListener() {
+                    binding.ivBackdrop.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View view) {
                             Intent i = new Intent(MovieDetailsActivity.this, MovieTrailerActivity.class);
