@@ -63,10 +63,13 @@ public class MovieDetailsActivity extends AppCompatActivity {
         // set the image
         Resources res = context.getResources();
         Drawable placeholder = ResourcesCompat.getDrawable(res, R.drawable.flicks_backdrop_placeholder, null);
+        int radius = 30;
+        int margin = 5;
         Glide
                 .with(context)
                 .load(movie.getBackdropPath())
                 .placeholder(placeholder)
+                .transform(new RoundedCornersTransformation(radius, margin))
                 .into(binding.ivBackdrop);
 
         // retrieve video from the API
