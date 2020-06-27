@@ -36,7 +36,7 @@ GIF created with [Kap](http://www.getkap.co/).
 
 ## Notes
 
-Describe any challenges encountered while building the app.
+I had some difficulty debugging changes between activities and listeners because I'm still a little shaky on code flow and exactly how transitions between activities are occuring.
 
 ## Open-source libraries used
 
