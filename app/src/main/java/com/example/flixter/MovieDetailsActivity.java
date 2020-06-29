@@ -79,12 +79,12 @@ public class MovieDetailsActivity extends AppCompatActivity {
         client.get(videoUrl, new JsonHttpResponseHandler() {
             @Override
             public void onSuccess(int statusCode, Headers headers, JSON json) {
-                Log.d(TAG, "onSuccess");
+                Log.i(TAG, "onSuccess");
                 JSONObject jsonObject = json.jsonObject;
                 try {
                     JSONArray results = jsonObject.getJSONArray("results");
                     final String videoId = getFirstYoutubeId(results);
-                    Log.d(TAG, String.format("Youtube ID: %s", videoId));
+                    Log.i(TAG, String.format("Youtube ID: %s", videoId));
 
                     // listener launches MovieTrailerActivity when backdrop image is tapped
                     binding.ivBackdrop.setOnClickListener(new View.OnClickListener() {
@@ -116,11 +116,13 @@ public class MovieDetailsActivity extends AppCompatActivity {
     private String getFirstYoutubeId(JSONArray jsonArray) {
         for (int i = 0; i < jsonArray.length(); i++) {
             try {
-                if (jsonArray.getJSONObject(i).getString("site").equals("YouTube")) {
-                    return jsonArray.getJSONObject(i).getString("key");
+                JSONObject json = jsonArray.getJSONObject(i);
+                String site = json.getString("site");
+                if ("YouTube".equals(site)) {
+                    return json.getString("key");
                 }
             } catch (JSONException e) {
-                e.printStackTrace();
+                Log.e(TAG, String.valueOf(e));
             }
         }
         return "";
